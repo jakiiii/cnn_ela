@@ -18,6 +18,7 @@ import PIL
 import os
 import itertools
 from tqdm import tqdm
+from sklearn.metrics import classification_report
 
 tf.__version__
 
@@ -64,13 +65,15 @@ for i in total_original:
 fake_images = []
 for i in total_tampered:
     fake_images.append(dataset_path + path_tampered + i)
-# %%
+
 len(pristine_images), len(fake_images)
-# %%
+print(1, len(pristine_images), len(fake_images))
+
 image_size = (224, 224)
-output_path = '../input/preprocessed-ela-images/'
-# %%
-output_path = '../input/preprocessed-ela-images/'
+print(2, image_size)
+output_path = '/input/preprocessed-ela-images/'
+print(3, output_path)
+
 if not os.path.exists(output_path + "resized_images/"):
     #     os.makedirs(output_path+"resized_images/fake_masks/")
     os.makedirs(output_path + "resized_images/fake_images/")
@@ -110,12 +113,17 @@ if not os.path.exists(output_path + "resized_images/"):
 
 else:
     print('images resized,path exists')
-# %%
+
 resized_fake_image_path = output_path + "resized_images/fake_images/"
 resized_pristine_image_path = output_path + "resized_images/pristine_images/"
 resized_fake_image = os.listdir(resized_fake_image_path)
 resized_pristine_image = os.listdir(resized_pristine_image_path)
-# %%
+
+print(4, resized_fake_image_path)
+print(5, resized_pristine_image_path)
+print(6, resized_fake_image)
+print(7, resized_pristine_image)
+
 len(resized_fake_image), len(resized_pristine_image)
 # %%
 ela_images_path = output_path + 'ELA_IMAGES/'
@@ -170,9 +178,7 @@ from keras.utils import to_categorical
 x_train, x_dev, y_train, y_dev = train_test_split(X, Y, test_size=0.2, random_state=133, shuffle=True)
 y_train = to_categorical(y_train, 2)
 y_dev = to_categorical(y_dev, 2)
-print(len(x_train), len(y_train))
-print(len(x_dev), len(y_dev))
-# %%
+import keras
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix
 from keras.utils import to_categorical
@@ -200,10 +206,8 @@ def CNN():
     return model
 
 
-# %%
 model1 = CNN()
 model1.summary()
-# %%
 epochs = 30
 batch_size = 32
 init_lr = 1e-4
@@ -211,8 +215,6 @@ init_lr = 1e-4
 optimizer = tf.keras.optimizers.legacy.Adam(learning_rate=init_lr, decay=init_lr / epochs)
 
 model1.compile(optimizer=optimizer, loss='binary_crossentropy', metrics=['accuracy'])
-# %%
-import keras
 
 early_stop = keras.callbacks.EarlyStopping(monitor='val_accuracy', patience=6, verbose=1, restore_best_weights=True)
 reduce_lr = keras.callbacks.ReduceLROnPlateau(monitor='val_accuracy', factor=0.22, patience=6, verbose=1,
@@ -223,8 +225,6 @@ hist = model1.fit(x_train, y_train,
                   validation_data=(x_dev, y_dev),
                   callbacks=[early_stop, reduce_lr],
                   verbose=1, shuffle=True)
-# %%
-import matplotlib.pyplot as plt
 
 plt.plot(hist.history['accuracy'])
 plt.plot(hist.history['val_accuracy'])
@@ -233,7 +233,7 @@ plt.xlabel('epoch')
 plt.ylabel('accuracy')
 plt.legend(['train', 'test'])
 plt.show()
-# %%
+
 plt.plot(hist.history['loss'])
 plt.plot(hist.history['val_loss'])
 plt.title("Loss")
@@ -241,8 +241,6 @@ plt.xlabel('epoch')
 plt.ylabel('loss')
 plt.legend(['train', 'test'])
 plt.show()
-# %%
-import itertools
 
 
 def plot_confusion_matrix(cm, classes,
@@ -295,13 +293,10 @@ def plot_confusion_matrix(cm, classes,
     plt.xlabel('Predicted label')
 
 
-# %%
 Y_pred = model1.predict(x_dev)
 Y_pred_classes = np.argmax(Y_pred, axis=1)
 Y_true = np.argmax(y_dev, axis=1)
 confusion_mtx = confusion_matrix(Y_true, Y_pred_classes)
 plot_confusion_matrix(confusion_mtx, classes=range(2))
-# %%
-from sklearn.metrics import classification_report
 
 print(classification_report(Y_true, Y_pred_classes))
