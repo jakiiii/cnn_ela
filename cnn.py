@@ -4,11 +4,13 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 
 np.random.seed(2)
+import keras
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix
+from keras.utils import to_categorical
 from tensorflow.python.keras.utils.np_utils import to_categorical
 from keras.models import Sequential
-from keras.layers import Dense, Flatten, Conv2D, MaxPool2D, Dropout, BatchNormalization
+from keras.layers import Dense, Flatten, Conv2D, MaxPool2D, Dropout, BatchNormalization, AvgPool2D
 from keras.optimizers import Adam
 from keras.preprocessing.image import ImageDataGenerator
 from keras.callbacks import EarlyStopping
@@ -19,6 +21,7 @@ import os
 import itertools
 from tqdm import tqdm
 from sklearn.metrics import classification_report
+
 
 tf.__version__
 
@@ -70,9 +73,7 @@ len(pristine_images), len(fake_images)
 print(1, len(pristine_images), len(fake_images))
 
 image_size = (224, 224)
-print(2, image_size)
 output_path = '/input/preprocessed-ela-images/'
-print(3, output_path)
 
 if not os.path.exists(output_path + "resized_images/"):
     #     os.makedirs(output_path+"resized_images/fake_masks/")
@@ -108,9 +109,6 @@ if not os.path.exists(output_path + "resized_images/"):
             j += 1
         except:
             print("Invalid File : ", pristine_image)
-
-
-
 else:
     print('images resized,path exists')
 
@@ -118,11 +116,6 @@ resized_fake_image_path = output_path + "resized_images/fake_images/"
 resized_pristine_image_path = output_path + "resized_images/pristine_images/"
 resized_fake_image = os.listdir(resized_fake_image_path)
 resized_pristine_image = os.listdir(resized_pristine_image_path)
-
-print(4, resized_fake_image_path)
-print(5, resized_pristine_image_path)
-print(6, resized_fake_image)
-print(7, resized_pristine_image)
 
 len(resized_fake_image), len(resized_pristine_image)
 # %%
@@ -172,22 +165,10 @@ for file in tqdm(os.listdir(ela_fake)):
 X = np.array(X)
 X.shape
 # %%
-from sklearn.model_selection import train_test_split
-from keras.utils import to_categorical
 
 x_train, x_dev, y_train, y_dev = train_test_split(X, Y, test_size=0.2, random_state=133, shuffle=True)
 y_train = to_categorical(y_train, 2)
 y_dev = to_categorical(y_dev, 2)
-import keras
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import confusion_matrix
-from keras.utils import to_categorical
-from keras.models import Sequential
-from keras.layers import Dense, Flatten, Conv2D, AvgPool2D, MaxPool2D, Dropout
-from keras.optimizers import Adam
-from keras.preprocessing.image import ImageDataGenerator
-from keras.callbacks import EarlyStopping
-
 
 def CNN():
     model = Sequential()
